@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>专属女友互动空间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ffafbd, #ffc3a0);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            color: #5a3e36;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        header {
+            margin: 20px 0;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            color: #e84393;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #6c5ce7;
+            margin-bottom: 20px;
+        }
+        
+        .games-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .game-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+        
+        .game-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #fd79a8;
+        }
+        
+        .game-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #e84393;
+        }
+        
+        .game-description {
+            font-size: 0.9rem;
+            color: #636e72;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #636e72;
+        }
+        
+        .heart {
+            color: #e84393;
+            font-size: 2rem;
+            margin: 10px;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+        
+        .btn {
+            background: linear-gradient(to right, #e84393, #fd79a8);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(232, 67, 147, 0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(232, 67, 147, 0.4);
+        }
+        
+        .btn:active {
+            transform: translateY(1px);
+        }
+        
+        .compliment {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            padding: 15px;
+            background-color: rgba(253, 121, 168, 0.1);
+            border-radius: 10px;
+            border-left: 5px solid #fd79a8;
+        }
+        
+        .hidden-message {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .hidden-message:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+        
+        footer {
+            margin-top: 30px;
+            padding: 20px;
+            color: #636e72;
+            font-size: 0.9rem;
+        }
+        
+        .kiss-animation {
+            position: fixed;
+            font-size: 2rem;
+            z-index: 50;
+            pointer-events: none;
+            animation: float 3s ease-in-out forwards;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) scale(0.5);
+                opacity: 0;
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .games-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>❤️ 专属女友互动空间 ❤️</h1>
+            <p class="subtitle">为你最特别的人准备的惊喜空间</p>
+        </header>
+        
+        <div class="games-container">
+            <div class="game-card" id="compliment-game">
+                <div class="game-icon">💝</div>
+                <h3 class="game-title">甜蜜夸夸</h3>
+                <p class="game-description">点击获取一句专属甜蜜赞美</p>
+            </div>
+            
+            <div class="game-card" id="love-meter">
+                <div class="game-icon">💖</div>
+                <h3 class="game-title">爱情测量仪</h3>
+                <p class="game-description">测量你对她的爱有多深</p>
+            </div>
+            
+            <div class="game-card" id="kiss-game">
+                <div class="game-icon">💋</div>
+                <h3 class="game-title">飞吻发射器</h3>
+                <p class="game-description">点击屏幕发送飞吻</p>
+            </div>
+            
+            <div class="game-card" id="memory-game">
+                <div class="game-icon">🎮</div>
+                <h3 class="game-title">记忆挑战</h3>
+                <p class="game-description">测试你们的默契程度</p>
+            </div>
+        </div>
+        
+        <div class="hidden-message" id="secret-message">
+            <p>✨ 点击这里发现隐藏的惊喜 ✨</p>
+        </div>
+        
+        <footer>
+            <p>用心制作的专属互动空间 | 只为最特别的你</p>
+        </footer>
+    </div>
+    
+    <!-- 甜蜜夸夸模态框 -->
+    <div class="modal" id="compliment-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>给你的甜蜜夸夸</h2>
+            <div class="heart">❤️</div>
+            <p class="compliment" id="compliment-text">你今天看起来特别迷人！</p>
+            <button class="btn" id="new-compliment">再来一句</button>
+        </div>
+    </div>
+    
+    <!-- 爱情测量仪模态框 -->
+    <div class="modal" id="love-meter-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>爱情测量仪</h2>
+            <div class="heart">💖</div>
+            <p>我对你的爱有...</p>
+            <div style="background: #f1f1f1; height: 30px; border-radius: 15px; margin: 20px 0; overflow: hidden;">
+                <div id="love-bar" style="height: 100%; width: 0%; background: linear-gradient(to right, #e84393, #fd79a8); border-radius: 15px; transition: width 2s;"></div>
+            </div>
+            <p id="love-result">测量中...</p>
+            <button class="btn" id="measure-love">开始测量</button>
+        </div>
+    </div>
+    
+    <!-- 隐藏惊喜模态框 -->
+    <div class="modal" id="secret-modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>给你的隐藏惊喜</h2>
+            <div class="heart">🎁</div>
+            <p>你发现了一个隐藏的惊喜！</p>
+            <p>我想对你说：</p>
+            <p class="compliment">无论何时何地，你都是我最珍贵的宝贝。和你在一起的每一刻都让我感到无比幸福！</p>
+            <button class="btn" id="close-secret">谢谢惊喜</button>
+        </div>
+    </div>
+
+    <script>
+        // 甜蜜夸夸数组
+        const compliments = [
+            "你的微笑让我的世界变得更加明亮！",
+            "今天你看起来美得让人窒息！",
+            "和你在一起的每一秒都是我最珍贵的时光。",
+            "你的眼睛里有星星，让我沉醉其中。",
+            "你不仅外表美丽，内心更是无比善良。",
+            "遇见你是我这辈子最幸运的事。",
+            "你的笑声是我最喜欢的音乐。",
+            "和你在一起，平凡的日常也变得特别。",
+            "你是我梦寐以求的一切。",
+            "爱你是我做过最正确的决定。",
+            "你的存在让我的生活充满了意义。",
+            "我每天都比前一天更爱你。"
+        ];
+        
+        // 获取DOM元素
+        const complimentGame = document.getElementById('compliment-game');
+        const loveMeter = document.getElementById('love-meter');
+        const kissGame = document.getElementById('kiss-game');
+        const memoryGame = document.getElementById('memory-game');
+        const secretMessage = document.getElementById('secret-message');
+        
+        const complimentModal = document.getElementById('compliment-modal');
+        const loveMeterModal = document.getElementById('love-meter-modal');
+        const secretModal = document.getElementById('secret-modal');
+        
+        const complimentText = document.getElementById('compliment-text');
+        const newComplimentBtn = document.getElementById('new-compliment');
+        const measureLoveBtn = document.getElementById('measure-love');
+        const loveBar = document.getElementById('love-bar');
+        const loveResult = document.getElementById('love-result');
+        const closeSecretBtn = document.getElementById('close-secret');
+        
+        const closeBtns = document.querySelectorAll('.close-btn');
+        
+        // 随机获取一句夸夸
+        function getRandomCompliment() {
+            const randomIndex = Math.floor(Math.random() * compliments.length);
+            return compliments[randomIndex];
+        }
+        
+        // 显示夸夸模态框
+        complimentGame.addEventListener('click', function() {
+            complimentText.textContent = getRandomCompliment();
+            complimentModal.style.display = 'flex';
+        });
+        
+        // 新夸夸按钮
+        newComplimentBtn.addEventListener('click', function() {
+            complimentText.textContent = getRandomCompliment();
+        });
+        
+        // 爱情测量仪
+        loveMeter.addEventListener('click', function() {
+            loveMeterModal.style.display = 'flex';
+        });
+        
+        measureLoveBtn.addEventListener('click', function() {
+            loveBar.style.width = '0%';
+            loveResult.textContent = '测量中...';
+            
+            setTimeout(() => {
+                // 随机生成一个很高的百分比
+                const lovePercentage = 90 + Math.floor(Math.random() * 10);
+                loveBar.style.width = lovePercentage + '%';
+                loveResult.textContent = `我对你的喜欢达到了${lovePercentage}%！这已经超出了测量范围！`;
+            }, 500);
+        });
+        
+        // 飞吻发射器
+        kissGame.addEventListener('click', function() {
+            createKissAnimation();
+        });
+        
+        // 创建飞吻动画
+        function createKissAnimation() {
+            const kiss = document.createElement('div');
+            kiss.className = 'kiss-animation';
+            kiss.innerHTML = '💋';
+            kiss.style.left = Math.random() * 80 + 10 + '%';
+            kiss.style.top = '80%';
+            
+            document.body.appendChild(kiss);
+            
+            setTimeout(() => {
+                document.body.removeChild(kiss);
+            }, 3000);
+        }
+        
+        // 点击屏幕任何地方发送飞吻
+        document.addEventListener('click', function(e) {
+            // 确保点击的不是按钮或卡片
+            if (!e.target.classList.contains('btn') && 
+                !e.target.classList.contains('game-card') && 
+                !e.target.closest('.game-card') &&
+                !e.target.closest('.modal-content')) {
+                createKissAnimation();
+            }
+        });
+        
+        // 记忆游戏
+        memoryGame.addEventListener('click', function() {
+            alert('记忆挑战：\n\n我们的第一次约会是在哪里？\n\nA) 洪崖洞\nB) 黄桷垭\nC) 西藏\n\n');
+        });
+        
+        // 隐藏惊喜
+        secretMessage.addEventListener('click', function() {
+            secretModal.style.display = 'flex';
+        });
+        
+        // 关闭模态框
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                complimentModal.style.display = 'none';
+                loveMeterModal.style.display = 'none';
+                secretModal.style.display = 'none';
+            });
+        });
+        
+        closeSecretBtn.addEventListener('click', function() {
+            secretModal.style.display = 'none';
+        });
+        
+        // 点击模态框外部关闭
+        window.addEventListener('click', function(e) {
+            if (e.target === complimentModal) {
+                complimentModal.style.display = 'none';
+            }
+            if (e.target === loveMeterModal) {
+                loveMeterModal.style.display = 'none';
+            }
+            if (e.target === secretModal) {
+                secretModal.style.display = 'none';
+            }
+        });
+        
+        // 页面加载时显示欢迎信息
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                alert('欢迎来到专属女友互动空间！\n\n这里充满了给你的惊喜和爱意，尽情探索吧！❤️');
+            }, 500);
+        });
+    </script>
+</body>
+</html>
